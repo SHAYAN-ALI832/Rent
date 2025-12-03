@@ -21,7 +21,7 @@ export default function Navbar() {
 
   return (
     <header className="w-full bg-[#f3efe9] shadow-sm">
-      <nav className="max-w-7xl mx-auto px-4 py- flex items-center justify-between">
+      <nav className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
         {/* Logo */}
         <div className="flex items-center space-x-2">
           <span className="text-lg font-semibold">✺ Rent</span>
