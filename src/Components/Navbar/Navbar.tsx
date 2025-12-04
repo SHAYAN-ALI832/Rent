@@ -7,10 +7,10 @@ export default function Navbar() {
 
   const navLinks = [
     { Label: "Home", to: "/" },
-    { Label: "Explore", to: "/explore" },
-    { Label: "Host", to: "/host" },
-    { Label: "About", to: "/about" },
-    { Label: "Contact", to: "/contact" },
+    { Label: "Experience", to: "/experience" },
+    { Label: "Services", to: "/services" },
+    // { Label: "About", to: "/about" },
+    // { Label: "Contact", to: "/contact" },
   ];
 
   // Reusable active style
