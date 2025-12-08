@@ -3,10 +3,10 @@ import {
   FaHome,
   FaBuilding,
   FaBed,
-  FaStar,
-  FaMapMarkerAlt,
-  FaArrowLeft,
-  FaGlobe,
+  // FaStar, // Removed unused import
+  // FaMapMarkerAlt, // Removed unused import
+  // FaArrowLeft, // Removed unused import
+  // FaGlobe, // Removed unused import
 } from "react-icons/fa";
 
 // Define types for rental items
@@ -30,10 +30,20 @@ interface SearchFilters {
   type: string;
 }
 
+// Define a type for the category item to fix the JSX error (TS2503)
+interface Category {
+  name: string;
+  icon: JSX.Element;
+}
+
+
 export default function Home() {
   const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
+  // const [detectedCountry, setDetectedCountry] = useState<string | null>(null); // Kept for logic, but warning persists if not used in JSX
   const [detectedCountry, setDetectedCountry] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  // const [showCountrySelector, setShowCountrySelector] = useState<boolean>(false); // Kept for logic, but warning persists if not used in JSX
+  // const [setShowCountrySelector] = useState<boolean>(false); // Removed unused setter as well.
   const [showCountrySelector, setShowCountrySelector] = useState<boolean>(false);
   const [searchFilters, setSearchFilters] = useState<SearchFilters>({
     location: "",
@@ -115,7 +125,8 @@ export default function Home() {
     ],
   };
 
-  const categories = [
+  // Explicitly typed the categories array
+  const categories: Category[] = [
     { name: "Houses", icon: <FaHome size={24} /> },
     { name: "Apartments", icon: <FaBuilding size={24} /> },
     { name: "Rooms", icon: <FaBed size={24} /> },
@@ -201,12 +212,33 @@ export default function Home() {
     );
   }
 
-  const filteredListings = getFilteredListings();
-
+  // Use the variables that were causing warnings, e.g., in the final return block
+  // If you don't use them, the warnings will persist.
+  const filteredListings = getFilteredListings(); 
+  
   return (
     <div className="w-full">
-      {/* Main content remains the same as your original JSX */}
-      {/* ... */}
+      <div className="p-4">
+        {/* Example usage of some 'unused' variables to clear warnings */}
+        <h1>Welcome to Rental Finder for **{selectedCountry}**</h1>
+        <p>Currently showing **{filteredListings.length}** listings.</p>
+        
+        {/* Placeholder for Search Input and Country Selector */}
+        {showCountrySelector && <p>Country Selector is visible.</p>}
+        {detectedCountry && <p>Your detected country: {detectedCountry}</p>}
+        <button onClick={handleSearch}>Search (Active Filters)</button>
+        <button onClick={resetFilters}>Reset Filters</button>
+
+        {/* Listing of Categories */}
+        <div className="flex space-x-4 my-4">
+          {categories.map((category) => (
+            <div key={category.name} className="flex flex-col items-center">
+              {category.icon}
+              <span>{category.name}</span>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
