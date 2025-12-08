@@ -190,7 +190,7 @@ export default function RentCars() {
                   selectedCountry === country ? "ring-4 ring-blue-500" : ""
                 }`}
               >
-                <div className="h-48 bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                <div className="h-48 bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center">
                   <FaMapMarkerAlt className="text-white text-6xl group-hover:scale-110 transition" />
                 </div>
                 <div className="p-6">
