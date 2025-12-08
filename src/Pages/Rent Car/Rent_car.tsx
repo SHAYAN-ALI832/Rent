@@ -1,19 +1,13 @@
 import { useState, useEffect } from "react";
 import {
   FaCar,
-  FaHome,
-  FaBuilding,
-  FaBed,
-  FaBicycle,
-  FaStore,
   FaStar,
   FaMapMarkerAlt,
   FaArrowLeft,
   FaGlobe,
 } from "react-icons/fa";
 
-// Type definitions
-interface RentalItem {
+interface CarRental {
   id: number;
   title: string;
   price: string;
@@ -23,20 +17,11 @@ interface RentalItem {
   img: string;
 }
 
-interface RentalsByCountry {
-  [country: string]: RentalItem[];
-}
-
-interface Category {
-  name: string;
-  icon: JSX.Element;
-}
-
-export default function Home() {
+export default function RentCars() {
   const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
   const [detectedCountry, setDetectedCountry] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [showCountrySelector, setShowCountrySelector] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [showCountrySelector, setShowCountrySelector] = useState(false);
   const [searchFilters, setSearchFilters] = useState({
     location: "",
     startDate: "",
@@ -44,8 +29,8 @@ export default function Home() {
     type: "",
   });
 
-  // Dummy data organized by country
-  const rentalsByCountry: RentalsByCountry = {
+  // Dummy car data by country
+  const carsByCountry: Record<string, CarRental[]> = {
     Pakistan: [
       {
         id: 1,
@@ -58,53 +43,17 @@ export default function Home() {
       },
       {
         id: 2,
-        title: "Modern 2-Bed Apartment",
-        price: "Rs. 4,200/day",
+        title: "Honda Civic 2019",
+        price: "Rs. 4,500/day",
         location: "Karachi",
-        type: "Apartment",
+        type: "Car",
         rating: 4.6,
-        img: "https://images.pexels.com/photos/1918291/pexels-photo-1918291.jpeg?auto=compress&cs=tinysrgb&w=600",
-      },
-      {
-        id: 3,
-        title: "Furnished Family House",
-        price: "Rs. 9,000/day",
-        location: "Islamabad",
-        type: "House",
-        rating: 4.9,
-        img: "https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg?auto=compress&cs=tinysrgb&w=600",
-      },
-      {
-        id: 4,
-        title: "Luxury Villa",
-        price: "Rs. 15,000/day",
-        location: "Islamabad",
-        type: "House",
-        rating: 4.7,
-        img: "https://images.pexels.com/photos/1396122/pexels-photo-1396122.jpeg?auto=compress&cs=tinysrgb&w=600",
-      },
-      {
-        id: 5,
-        title: "Mountain Bike",
-        price: "Rs. 800/day",
-        location: "Lahore",
-        type: "Bike",
-        rating: 4.5,
-        img: "https://images.pexels.com/photos/276517/pexels-photo-276517.jpeg?auto=compress&cs=tinysrgb&w=600",
-      },
-      {
-        id: 6,
-        title: "Studio Apartment",
-        price: "Rs. 3,000/day",
-        location: "Karachi",
-        type: "Apartment",
-        rating: 4.4,
-        img: "https://images.pexels.com/photos/271624/pexels-photo-271624.jpeg?auto=compress&cs=tinysrgb&w=600",
+        img: "https://images.pexels.com/photos/170811/pexels-photo-170811.jpeg?auto=compress&cs=tinysrgb&w=600",
       },
     ],
     UAE: [
       {
-        id: 7,
+        id: 3,
         title: "Luxury SUV",
         price: "AED 500/day",
         location: "Dubai",
@@ -112,28 +61,10 @@ export default function Home() {
         rating: 4.9,
         img: "https://images.pexels.com/photos/170811/pexels-photo-170811.jpeg?auto=compress&cs=tinysrgb&w=600",
       },
-      {
-        id: 8,
-        title: "Penthouse Downtown",
-        price: "AED 1,200/day",
-        location: "Dubai",
-        type: "Apartment",
-        rating: 4.8,
-        img: "https://images.pexels.com/photos/1643383/pexels-photo-1643383.jpeg?auto=compress&cs=tinysrgb&w=600",
-      },
-      {
-        id: 9,
-        title: "Beach Villa",
-        price: "AED 2,000/day",
-        location: "Abu Dhabi",
-        type: "House",
-        rating: 5.0,
-        img: "https://images.pexels.com/photos/1612351/pexels-photo-1612351.jpeg?auto=compress&cs=tinysrgb&w=600",
-      },
     ],
     USA: [
       {
-        id: 10,
+        id: 4,
         title: "Tesla Model 3",
         price: "$120/day",
         location: "Los Angeles",
@@ -141,25 +72,11 @@ export default function Home() {
         rating: 4.9,
         img: "https://images.pexels.com/photos/1592384/pexels-photo-1592384.jpeg?auto=compress&cs=tinysrgb&w=600",
       },
-      {
-        id: 11,
-        title: "Manhattan Loft",
-        price: "$300/day",
-        location: "New York",
-        type: "Apartment",
-        rating: 4.7,
-        img: "https://images.pexels.com/photos/1457842/pexels-photo-1457842.jpeg?auto=compress&cs=tinysrgb&w=600",
-      },
     ],
   };
 
-  const categories: Category[] = [
+  const categories = [
     { name: "Cars", icon: <FaCar size={24} /> },
-    { name: "Houses", icon: <FaHome size={24} /> },
-    { name: "Apartments", icon: <FaBuilding size={24} /> },
-    { name: "Rooms", icon: <FaBed size={24} /> },
-    { name: "Bikes", icon: <FaBicycle size={24} /> },
-    { name: "Shops", icon: <FaStore size={24} /> },
   ];
 
   // Country mapping for geolocation
@@ -182,7 +99,7 @@ export default function Home() {
       const countryCode = data.country_code;
       const country = countryMapping[countryCode];
 
-      if (country && rentalsByCountry[country]) {
+      if (country && carsByCountry[country]) {
         setDetectedCountry(country);
         setSelectedCountry(country);
       } else {
@@ -198,19 +115,18 @@ export default function Home() {
     }
   };
 
-  const getFilteredListings = (): RentalItem[] => {
+  const getFilteredListings = () => {
     if (!selectedCountry) return [];
 
-    let listings = rentalsByCountry[selectedCountry] || [];
+    let listings = carsByCountry[selectedCountry] || [];
+
+    // Only cars
+    listings = listings.filter((item) => item.type === "Car");
 
     if (searchFilters.location) {
       listings = listings.filter((item) =>
         item.location.toLowerCase().includes(searchFilters.location.toLowerCase())
       );
-    }
-
-    if (searchFilters.type && searchFilters.type !== "Select Type") {
-      listings = listings.filter((item) => item.type === searchFilters.type);
     }
 
     return listings;
@@ -229,6 +145,7 @@ export default function Home() {
     });
   };
 
+  // Loading State
   if (isLoading) {
     return (
       <div className="w-full h-screen flex items-center justify-center bg-gray-50">
@@ -240,6 +157,7 @@ export default function Home() {
     );
   }
 
+  // Country Selector Modal
   if (showCountrySelector) {
     return (
       <div className="w-full min-h-screen bg-gray-50">
@@ -249,18 +167,18 @@ export default function Home() {
             className="flex items-center gap-2 text-gray-700 hover:text-black mb-8"
           >
             <FaArrowLeft />
-            <span>Back to Rentals</span>
+            <span>Back to Cars</span>
           </button>
 
           <h2 className="text-3xl font-bold mb-4 text-center">
             Select Your Country
           </h2>
           <p className="text-gray-600 text-center mb-12">
-            Currently showing rentals from: <span className="font-semibold">{selectedCountry}</span>
+            Currently showing cars from: <span className="font-semibold">{selectedCountry}</span>
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
-            {Object.keys(rentalsByCountry).map((country) => (
+            {Object.keys(carsByCountry).map((country) => (
               <div
                 key={country}
                 onClick={() => {
@@ -283,7 +201,7 @@ export default function Home() {
                     )}
                   </h3>
                   <p className="text-gray-600 mb-4">
-                    {rentalsByCountry[country].length} listings available
+                    {carsByCountry[country].length} cars available
                   </p>
                   <button className="w-full bg-black text-white py-2 rounded-md hover:bg-gray-800 transition">
                     {selectedCountry === country ? "Current Selection" : "Switch to This Country"}
@@ -307,11 +225,11 @@ export default function Home() {
           <div className="flex items-center justify-between mb-4">
             <div>
               <h2 className="text-2xl font-bold">
-                Rentals in {selectedCountry}
+                Cars in {selectedCountry}
               </h2>
               {detectedCountry === selectedCountry && (
                 <p className="text-sm text-gray-600 mt-1">
-                   Auto-detected from your location
+                  📍 Auto-detected from your location
                 </p>
               )}
             </div>
@@ -352,20 +270,6 @@ export default function Home() {
                 }
                 className="border p-2 rounded-md"
               />
-              <select
-                value={searchFilters.type}
-                onChange={(e) =>
-                  setSearchFilters({ ...searchFilters, type: e.target.value })
-                }
-                className="border p-2 rounded-md"
-              >
-                <option>Select Type</option>
-                <option>Car</option>
-                <option>House</option>
-                <option>Apartment</option>
-                <option>Room</option>
-                <option>Bike</option>
-              </select>
             </div>
 
             <div className="flex gap-3 mt-4">
@@ -394,7 +298,7 @@ export default function Home() {
             <div
               key={cat.name}
               onClick={() =>
-                setSearchFilters({ ...searchFilters, type: cat.name.slice(0, -1) })
+                setSearchFilters({ ...searchFilters, type: cat.name })
               }
               className="flex flex-col items-center p-4 rounded-xl bg-gray-100 hover:bg-gray-200 cursor-pointer transition"
             >
@@ -414,7 +318,7 @@ export default function Home() {
         {filteredListings.length === 0 ? (
           <div className="text-center py-16">
             <p className="text-gray-500 text-lg">
-              No rentals found matching your criteria.
+              No cars found matching your criteria.
             </p>
             <button
               onClick={resetFilters}

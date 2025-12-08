@@ -1,42 +1,19 @@
 import { useState, useEffect } from "react";
 import {
-  FaCar,
   FaHome,
   FaBuilding,
   FaBed,
-  FaBicycle,
-  FaStore,
   FaStar,
   FaMapMarkerAlt,
   FaArrowLeft,
   FaGlobe,
 } from "react-icons/fa";
 
-// Type definitions
-interface RentalItem {
-  id: number;
-  title: string;
-  price: string;
-  location: string;
-  type: string;
-  rating: number;
-  img: string;
-}
-
-interface RentalsByCountry {
-  [country: string]: RentalItem[];
-}
-
-interface Category {
-  name: string;
-  icon: JSX.Element;
-}
-
 export default function Home() {
-  const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
-  const [detectedCountry, setDetectedCountry] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [showCountrySelector, setShowCountrySelector] = useState<boolean>(false);
+  const [selectedCountry, setSelectedCountry] = useState(null);
+  const [detectedCountry, setDetectedCountry] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [showCountrySelector, setShowCountrySelector] = useState(false);
   const [searchFilters, setSearchFilters] = useState({
     location: "",
     startDate: "",
@@ -45,17 +22,8 @@ export default function Home() {
   });
 
   // Dummy data organized by country
-  const rentalsByCountry: RentalsByCountry = {
+  const rentalsByCountry = {
     Pakistan: [
-      {
-        id: 1,
-        title: "Toyota Corolla 2020",
-        price: "Rs. 5,000/day",
-        location: "Lahore",
-        type: "Car",
-        rating: 4.8,
-        img: "https://images.pexels.com/photos/116675/pexels-photo-116675.jpeg?auto=compress&cs=tinysrgb&w=600",
-      },
       {
         id: 2,
         title: "Modern 2-Bed Apartment",
@@ -84,15 +52,6 @@ export default function Home() {
         img: "https://images.pexels.com/photos/1396122/pexels-photo-1396122.jpeg?auto=compress&cs=tinysrgb&w=600",
       },
       {
-        id: 5,
-        title: "Mountain Bike",
-        price: "Rs. 800/day",
-        location: "Lahore",
-        type: "Bike",
-        rating: 4.5,
-        img: "https://images.pexels.com/photos/276517/pexels-photo-276517.jpeg?auto=compress&cs=tinysrgb&w=600",
-      },
-      {
         id: 6,
         title: "Studio Apartment",
         price: "Rs. 3,000/day",
@@ -103,15 +62,6 @@ export default function Home() {
       },
     ],
     UAE: [
-      {
-        id: 7,
-        title: "Luxury SUV",
-        price: "AED 500/day",
-        location: "Dubai",
-        type: "Car",
-        rating: 4.9,
-        img: "https://images.pexels.com/photos/170811/pexels-photo-170811.jpeg?auto=compress&cs=tinysrgb&w=600",
-      },
       {
         id: 8,
         title: "Penthouse Downtown",
@@ -133,15 +83,6 @@ export default function Home() {
     ],
     USA: [
       {
-        id: 10,
-        title: "Tesla Model 3",
-        price: "$120/day",
-        location: "Los Angeles",
-        type: "Car",
-        rating: 4.9,
-        img: "https://images.pexels.com/photos/1592384/pexels-photo-1592384.jpeg?auto=compress&cs=tinysrgb&w=600",
-      },
-      {
         id: 11,
         title: "Manhattan Loft",
         price: "$300/day",
@@ -153,22 +94,20 @@ export default function Home() {
     ],
   };
 
-  const categories: Category[] = [
-    { name: "Cars", icon: <FaCar size={24} /> },
+  const categories = [
     { name: "Houses", icon: <FaHome size={24} /> },
     { name: "Apartments", icon: <FaBuilding size={24} /> },
     { name: "Rooms", icon: <FaBed size={24} /> },
-    { name: "Bikes", icon: <FaBicycle size={24} /> },
-    { name: "Shops", icon: <FaStore size={24} /> },
   ];
 
   // Country mapping for geolocation
-  const countryMapping: Record<string, string> = {
+  const countryMapping = {
     PK: "Pakistan",
     AE: "UAE",
     US: "USA",
   };
 
+  // Auto-detect country on mount
   useEffect(() => {
     detectUserCountry();
   }, []);
@@ -198,10 +137,14 @@ export default function Home() {
     }
   };
 
-  const getFilteredListings = (): RentalItem[] => {
+  const getFilteredListings = () => {
     if (!selectedCountry) return [];
 
     let listings = rentalsByCountry[selectedCountry] || [];
+
+    // Only property types
+    const propertyTypes = ["House", "Apartment", "Room"];
+    listings = listings.filter((item) => propertyTypes.includes(item.type));
 
     if (searchFilters.location) {
       listings = listings.filter((item) =>
@@ -229,6 +172,7 @@ export default function Home() {
     });
   };
 
+  // Loading State
   if (isLoading) {
     return (
       <div className="w-full h-screen flex items-center justify-center bg-gray-50">
@@ -240,6 +184,7 @@ export default function Home() {
     );
   }
 
+  // Country Selector Modal
   if (showCountrySelector) {
     return (
       <div className="w-full min-h-screen bg-gray-50">
@@ -283,7 +228,9 @@ export default function Home() {
                     )}
                   </h3>
                   <p className="text-gray-600 mb-4">
-                    {rentalsByCountry[country].length} listings available
+                    {rentalsByCountry[country].filter(item =>
+                      ["House","Apartment","Room"].includes(item.type)
+                    ).length} property listings available
                   </p>
                   <button className="w-full bg-black text-white py-2 rounded-md hover:bg-gray-800 transition">
                     {selectedCountry === country ? "Current Selection" : "Switch to This Country"}
@@ -297,6 +244,7 @@ export default function Home() {
     );
   }
 
+  // Main Listings View
   const filteredListings = getFilteredListings();
 
   return (
@@ -307,7 +255,7 @@ export default function Home() {
           <div className="flex items-center justify-between mb-4">
             <div>
               <h2 className="text-2xl font-bold">
-                Rentals in {selectedCountry}
+                Properties in {selectedCountry}
               </h2>
               {detectedCountry === selectedCountry && (
                 <p className="text-sm text-gray-600 mt-1">
@@ -360,11 +308,9 @@ export default function Home() {
                 className="border p-2 rounded-md"
               >
                 <option>Select Type</option>
-                <option>Car</option>
                 <option>House</option>
                 <option>Apartment</option>
                 <option>Room</option>
-                <option>Bike</option>
               </select>
             </div>
 
@@ -414,7 +360,7 @@ export default function Home() {
         {filteredListings.length === 0 ? (
           <div className="text-center py-16">
             <p className="text-gray-500 text-lg">
-              No rentals found matching your criteria.
+              No properties found matching your criteria.
             </p>
             <button
               onClick={resetFilters}

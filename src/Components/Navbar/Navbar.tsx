@@ -9,6 +9,8 @@ export default function Navbar() {
     { Label: "Home", to: "/" },
     { Label: "Experience", to: "/experience" },
     { Label: "Services", to: "/services" },
+    {Label:"Rent Car",to:'/rent-car'},
+    { Label: "Rent Property", to: "/rent-property" },
     // { Label: "About", to: "/about" },
     // { Label: "Contact", to: "/contact" },
   ];
@@ -42,9 +44,9 @@ export default function Navbar() {
         <div className="hidden md:flex items-center space-x-6">
           <span className="text-sm cursor-pointer">USD</span>
           <span className="text-sm cursor-pointer">English</span>
-          <button className="px-5 py-2 bg-black text-white rounded-full text-sm">
+          {/* <button className="px-5 py-2 bg-black text-white rounded-full text-sm">
             LOG IN
-          </button>
+          </button> */}
         </div>
 
         {/* Mobile Hamburger */}
@@ -81,9 +83,9 @@ export default function Navbar() {
           <li className="cursor-pointer">USD</li>
           <li className="cursor-pointer">English</li>
 
-          <button className="mt-4 px-5 py-2 bg-black text-white rounded-full text-sm w-fit">
+          {/* <button className="mt-4 px-5 py-2 bg-black text-white rounded-full text-sm w-fit">
             LOG IN
-          </button>
+          </button> */}
         </ul>
       </div>
 
